@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Chat = require('./models/chat');
 
 main()
 .then(() => {
@@ -39,7 +40,7 @@ let allChats = [
     }
 ];
 
-chat.insertMany(allChats)
+Chat.insertMany(allChats)
 .then(() => {
     console.log('Data inserted successfully');
 })
