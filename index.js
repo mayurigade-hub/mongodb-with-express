@@ -26,9 +26,13 @@ async function main() {
 
 //Index route
 app.get('/chats', async (req, res) => {
+    try{
     let chats = await Chat.find();
     console.log(chats);
     res.render('index.ejs', { chats });
+} catch (err) {
+    next(err);
+}   
 });
 
 //New Route
@@ -38,16 +42,21 @@ app.get('/chats/new', (req, res) => {
 
 //Route to understand the error handlers in Async functions
 app.get("/chats/:id", async (req, res) => {
+    try{
     let { id } = req.params;
     let chat = await Chat.findById(id);
     if (!chat) {
-        next (new ExpressError('Chat not found', 404));
+    next (new ExpressError('Chat not found', 404));
     }       
     res.render('show.ejs', { chat });
+} catch (err) {
+    next(err);  
+    }  
 });
 
 //Create Route
 app.post("/chats", async (req, res) => {
+    try{
     let { from, to, msg } = req.body;
     let newChat = new Chat({
         from: from,
@@ -57,28 +66,44 @@ app.post("/chats", async (req, res) => {
     })
     await newChat.save();
     res.redirect('/chats');
+
+    } catch (err) {
+        next(err);
+    }
 });
 
 //Edit Route
 app.get('/chats/:id/edit', async (req, res) => {
+    try{
     let { id } = req.params;
     let chat = await Chat.findById(id);
     res.render('edit.ejs', { chat });
+} catch (err) {
+    next(err);      
+}
 });
 
 //Update Route
 app.put('/chats/:id', async (req, res) => {
+    try{
     let { id } = req.params;
     let { msg: newMsg } = req.body;
     await Chat.findByIdAndUpdate(id, { msg: newMsg }, {runValidators: true, new: true});
     res.redirect('/chats');
+    } catch (err) {
+        next(err);
+    }
 });
 
 //Destroy Route
 app.delete('/chats/:id', async (req, res) => {
+    try{
     let { id } = req.params;
     await Chat.findByIdAndDelete(id);
     res.redirect('/chats');
+    } catch (err) {
+        next(err);
+    }   
 }); 
 
 app.get('/', (req,res) => {
