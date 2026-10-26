@@ -31,6 +31,20 @@ function wrapAsync(fn) {
     }
 }
 
+//Errors in mongoose 
+const handleValidationError = err => {
+    console.log("This is validation error, please follow rules")
+    return(err);
+}
+
+app.use((err, req, res, next) => {{
+    console.log(err.name);
+    if(err.name === 'ValidationError'){
+      err = handleValidationError(err);
+    } 
+    next(err);
+}});
+
 //Index route
 app.get('/chats', wrapAsync(async (req, res) => {
     let chats = await Chat.find();
